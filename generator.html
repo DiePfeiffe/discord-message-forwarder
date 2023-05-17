@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <title>Discord Webhook Config Generator</title>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+        }
+
+        #fields-container {
+            margin-bottom: 10px;
+        }
+
+        input[type="text"] {
+            width: 200px;
+            padding: 5px;
+            margin-right: 5px;
+        }
+
+        button {
+            padding: 5px 10px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #45a049;
+        }
+
+        .add-webhook-btn {
+            background-color: #2196F3;
+            margin-left: 5px;
+        }
+
+        .add-webhook-btn:hover {
+            background-color: #0b7dda;
+        }
+    </style>
+    <script>function importJson() {
+            let json = document.getElementById("json").value;
+            let data = JSON.parse(json);
+
+            let container = document.getElementById("fields-container");
+            container.innerHTML = "";
+
+            for (let channel in data) {
+                let newField = document.createElement("div");
+                newField.innerHTML = `
+        <input type="text" class="channel" placeholder="Discord Channel" value="${channel}">
+      `;
+                for (let i = 0; i < data[channel].length; i++) {
+                    newField.innerHTML += `
+        <input type="text" class="webhook" placeholder="Webhook URL" value="${data[channel][i]}">
+      `;
+                }
+                newField.innerHTML += `
+        <button class="add-webhook-btn" onclick="addWebhook(this)" >+</button>
+      `;
+                container.appendChild(newField);
+            }
+        }
+
+    function generateJSON() {
+            let channels = document.getElementsByClassName("channel");
+
+            let data = {};
+
+            for (let i = 0; i < channels.length; i++) {
+                let channel = channels[i].value.trim();
+                data[channel] = [];
+                let webhooks = channels[i].parentElement.getElementsByClassName("webhook");
+                for (let j = 0; j < webhooks.length; j++) {
+                    let webhook = webhooks[j].value.trim();
+                    if (channel && webhook) {
+                        data[channel].push(webhook);
+                    }
+                }
+            }
+
+            document.getElementById("json").value = JSON.stringify(data);
+        }
+
+        function downloadJSON() {
+            generateJSON();
+            let json = document.getElementById("json").value;
+            let element = document.createElement("a");
+            element.setAttribute("href", "data:text/plain;charset=utf-8," + encodeURIComponent(json));
+            element.setAttribute("download", "webhook-config.json");
+            element.style.display = "none";
+            document.body.appendChild(element);
+            element.click();
+            document.body.removeChild(element);
+        }
+
+        function addFields() {
+            let container = document.getElementById("fields-container");
+            let newField = document.createElement("div");
+            newField.innerHTML = `
+        <input type="text" class="channel" placeholder="Discord Channel">
+        <input type="text" class="webhook" placeholder="Webhook URL">
+        <input type="text" class="webhook" placeholder="Webhook URL">
+        <button class="add-webhook-btn" onclick="addWebhook(this)" >+</button>
+      `;
+            container.appendChild(newField);
+        }
+        function addWebhook(button) {
+            // behind the existing webhook field add a new one. This is so that the button is always at the end
+            let container = button.parentElement;
+            container.removeChild(button);
+                container.insertAdjacentHTML("beforeend",`
+       <input type="text" class="webhook" placeholder="Webhook URL">
+        <button class="add-webhook-btn" onclick="addWebhook(this)" >+</button>
+        `);
+            }
+
+    </script>
+</head>
+<body>
+<h1>Discord Webhook Config Generator für <a href="https://github.com/DiePfeiffe/discord-message-forwarder">DiePfeiffe/discord-message-forwarder</a></h1>
+
+<div id="fields-container">
+    <div>
+        <input type="text" class="channel" placeholder="Discord Channel">
+        <input type="text" class="webhook" placeholder="Webhook URL">
+        <input type="text" class="webhook" placeholder="Webhook URL">
+        <button class="add-webhook-btn" onclick="addWebhook(this)" >+</button>
+    </div>
+</div>
+
+<button onclick="addFields()">Channel hinzufügen</button>
+<button onclick="generateJSON()">JSON exportieren</button>
+<button onclick="downloadJSON()">JSON herunterladen</button>
+<button onclick="importJson()">JSON importieren</button>
+<hr>
+<label for="json">JSON</label>
+<br>
+<textarea id="json" rows="10" cols="100"></textarea>
+</body>
+</html>
