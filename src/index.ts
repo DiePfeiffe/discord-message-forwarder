@@ -36,7 +36,7 @@ discord.on('ready', (client: Client) => {
     });
 });
 discord.on('messageCreate', async (message: Message) =>{
-    if (message.author.bot) return;
+    if (message.author.bot || MessageForwards[message.channelId] === undefined) return;
     console.log(`Forwarding FFW Message from ${message.author.username} to FFW Discords`);
     for (let webhookURL of MessageForwards[message.channelId]) {
         const webhookClient = new WebhookClient({url: webhookURL});
