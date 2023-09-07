@@ -12,12 +12,14 @@ services:
     image: ghcr.io/diepfeiffe/discord-message-forwarder:latest
     environment:
       - DISCORD_TOKEN=DEIN_DISCORD_BOT_TOKEN
+      - FRACTION_TAG=DEMO
       - FORWARD_CONFIG={"channel_id":["WEBHOOK_URL_1","WEBHOOK_URL_2"]} # https://pfeifferserver.de/discord-message-forward-generator.html
 ```
 ### Docker
 ```bash
 docker run -d --restart unless-stopped \
   -e DISCORD_TOKEN=DEIN_DISCORD_BOT_TOKEN \
+  -e FRACTION_TAG= DEMO \
   -e FORWARD_CONFIG='{"channel_id":["WEBHOOK_URL_1","WEBHOOK_URL_2"]}' \
   ghcr.io/diepfeiffe/discord-message-forwarder:latest
 ```
@@ -34,5 +36,6 @@ npm run start
 .env Datei erstellen und folgende Variablen eintragen:
 ```env
 DISCORD_TOKEN=DEIN_DISCORD_BOT_TOKEN
+FRACTION_TAG= # Kürzel für die Fraktion
 FORWARD_CONFIG={"channel_id":["WEBHOOK_URL_1","WEBHOOK_URL_2"]} # https://pfeifferserver.de/discord-message-forward-generator.html
 ```
